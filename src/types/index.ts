@@ -43,3 +43,13 @@ export interface CreateTaskDto {
   dueDate: string | null;
   projectId: number;
 }
+
+
+export interface DashboardStats {
+  totalProjects: number;
+  totalTasks: number;
+  completedTasks: number;
+  statusBreakdown: { name: string; count: number }[];
+  recentTasks: TaskItem[];
+  dueSoon: TaskItem[];
+}

@@ -25,7 +25,7 @@ export default function LoginPage() {
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('user', JSON.stringify(response.data.user));
 
-      navigate('/projects');
+      navigate('/dashboard');
     } catch {
       setError('Invalid email or password.');
     } finally {

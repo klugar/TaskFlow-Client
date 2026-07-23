@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 import type { Project, CreateProjectDto } from '../types';
+import Sidebar from '../components/Sidebar';
+import toast from 'react-hot-toast';
 
 export default function ProjectsPage() {
   const navigate = useNavigate();
@@ -13,8 +15,6 @@ export default function ProjectsPage() {
     description: '',
     dueDate: null,
   });
-
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
 
   useEffect(() => {
     fetchProjects();
@@ -31,16 +31,19 @@ export default function ProjectsPage() {
     }
   };
 
+
+  
   const handleCreate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      await api.post('/projects', form);
-      setForm({ name: '', description: '', dueDate: null });
-      setShowForm(false);
-      fetchProjects();
-    } catch {
-      alert('Failed to create project.');
-    }
+  e.preventDefault();
+  try {
+    await api.post('/projects', form);
+    setForm({ name: '', description: '', dueDate: null });
+    setShowForm(false);
+    fetchProjects();
+    toast.success('Project created!');
+  } catch {
+    toast.error('Failed to create project.');
+  }
   };
 
   const handleDelete = async (id: number) => {
@@ -49,28 +52,11 @@ export default function ProjectsPage() {
     fetchProjects();
   };
 
-  const handleLogout = () => {
-    localStorage.clear();
-    navigate('/login');
-  };
-
   return (
-    <div className="min-h-screen bg-gray-100">
-      {/* Navbar */}
-      <nav className="bg-white shadow-sm px-6 py-4 flex justify-between items-center">
-        <h1 className="text-xl font-bold text-blue-600">TaskFlow</h1>
-        <div className="flex items-center gap-4">
-          <span className="text-gray-600 text-sm">👋 {user.fullName}</span>
-          <button
-            onClick={handleLogout}
-            className="text-sm text-red-500 hover:underline"
-          >
-            Logout
-          </button>
-        </div>
-      </nav>
+    <div className="flex min-h-screen bg-gray-100">
+      <Sidebar />
 
-      <div className="max-w-4xl mx-auto px-6 py-8">
+      <div className="flex-1 px-6 py-8">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-gray-800">Projects</h2>
@@ -137,9 +123,9 @@ export default function ProjectsPage() {
                   <h3
                     className="font-semibold text-gray-800 text-lg cursor-pointer hover:text-blue-600"
                     onClick={() => navigate(`/projects/${project.id}/tasks`)}
-                    >
+                  >
                     {project.name}
-                </h3>
+                  </h3>
                   <p className="text-gray-500 text-sm mt-1">
                     {project.description}
                   </p>

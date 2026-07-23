@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 import type { TaskItem, CreateTaskDto } from '../types';
+import toast from 'react-hot-toast';
 
 const PRIORITIES = [
   { label: 'Low', value: 0 },
@@ -61,29 +62,31 @@ export default function TasksPage() {
   };
 
   const handleCreate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      await api.post('/tasks', form);
-      setForm({
-        title: '',
-        description: '',
-        priority: 1,
-        dueDate: null,
-        projectId: Number(projectId),
-      });
-      setShowForm(false);
-      fetchTasks();
+  e.preventDefault();
+  try {
+    await api.post('/tasks', form);
+    setForm({
+      title: '',
+      description: '',
+      priority: 1,
+      dueDate: null,
+      projectId: Number(projectId),
+    });
+    setShowForm(false);
+    fetchTasks();
+    toast.success('Task created!');
     } catch {
-      alert('Failed to create task.');
+      toast.error('Failed to create task.');
     }
   };
 
   const handleStatusChange = async (taskId: number, statusValue: number) => {
-    try {
-      await api.patch(`/tasks/${taskId}/status`, { status: statusValue });
-      fetchTasks();
+  try {
+    await api.patch(`/tasks/${taskId}/status`, { status: statusValue });
+    fetchTasks();
+    toast.success('Status updated!');
     } catch {
-      alert('Failed to update status.');
+      toast.error('Failed to update status.');
     }
   };
 
